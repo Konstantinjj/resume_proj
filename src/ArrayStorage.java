@@ -5,6 +5,7 @@ public class ArrayStorage {
     Resume[] storage = new Resume[10000];
 
     void clear() {
+        int check = 1;
         for (int i = 0; i < storage.length; i++) {
             if (storage[i] == null) {
                 return;
