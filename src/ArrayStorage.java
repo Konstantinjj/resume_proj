@@ -3,57 +3,41 @@
  */
 public class ArrayStorage {
     Resume[] storage = new Resume[10000];
+    private int size = 0;
 
     void clear() {
-        for (int i = 0; i < storage.length; i++) {
-            if (storage[i] == null) {
-                return;
-            }
+        for (int i = 0; i < size; i++) {
             storage[i] = null;
         }
+        size = 0;
     }
 
     void save(Resume r) {
-        for (int i = 0; i < storage.length; i++) {
-            if (storage[i] != null && storage[i].toString().equals(r.toString())) {
+        for (int i = 0; i < size; i++) {
+            if (storage[i].toString().equals(r.toString())) {
                 System.out.println("Такой элемент уже существует");
                 return;
             }
-            if (storage[i] == null) {
-                storage[i] = r;
-                return;
-            }
         }
+        storage[size] = r;
+        size++;
     }
 
     Resume get(String uuid) {
-        for (Resume resume : storage) {
-            if (resume != null && resume.toString().equals(uuid)) {
-                return resume;
+        for (int i = 0; i < size; i++) {
+            if (storage[i].toString().equals(uuid)) {
+                return storage[i];
             }
         }
         return null;
     }
 
     void delete(String uuid) {
-        int index = 0;
-        for (int i = 0; i < storage.length; i++) {
-            if (storage[i] == null) {
-                return;
-            }
+        for (int i = 0; i < size; i++) {
             if (storage[i].toString().equals(uuid)) {
-                storage[i] = null;
-                index = i + 1;
-                break;
-            }
-        }
-        if (storage[index] != null) {
-            for (int i = index; i < storage.length; i++) {
-                if (storage[i] == null) {
-                    storage[i - 1] = null;
-                    return;
-                }
-                storage[i - 1] = storage[i];
+                storage[i] = storage[size - 1];
+                storage[size - 1] = null;
+                size--;
             }
         }
     }
@@ -75,13 +59,6 @@ public class ArrayStorage {
     }
 
     int size() {
-        int size = 0;
-        for (Resume resume : storage) {
-            if (resume == null) {
-                break;
-            }
-            size++;
-        }
         return size;
     }
 }
