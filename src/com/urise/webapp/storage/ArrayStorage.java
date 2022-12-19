@@ -16,34 +16,45 @@ public class ArrayStorage {
         size = 0;
     }
 
+    public void update(Resume resume) {
+        int index = getIndexOfResume(resume.getUuid());
+        if (index == -1) {
+            printMessNotExist(resume.getUuid());
+            return;
+        }
+        storage[index] = resume;
+    }
+
     public void save(Resume r) {
-        for (int i = 0; i < size; i++) {
-            if (storage[i].toString().equals(r.toString())) {
-                System.out.println("Такой элемент уже существует");
-                return;
-            }
+        if (getIndexOfResume(r.getUuid()) != -1) {
+            System.out.println("Резюме " + r.getUuid() + " уже существует");
+            return;
+        }
+        if (size >= storage.length) {
+            System.out.println("База переполнена");
+            return;
         }
         storage[size] = r;
         size++;
     }
 
     public Resume get(String uuid) {
-        for (int i = 0; i < size; i++) {
-            if (storage[i].toString().equals(uuid)) {
-                return storage[i];
-            }
+        int index = getIndexOfResume(uuid);
+        if (index == -1) {
+            printMessNotExist(uuid);
+            return null;
         }
-        return null;
+        return storage[index];
     }
 
     public void delete(String uuid) {
-        for (int i = 0; i < size; i++) {
-            if (storage[i].toString().equals(uuid)) {
-                storage[i] = storage[size - 1];
-                storage[size - 1] = null;
-                size--;
-            }
+        int index = getIndexOfResume(uuid);
+        if (index == -1) {
+            printMessNotExist(uuid);
         }
+        storage[index] = storage[size - 1];
+        storage[size - 1] = null;
+        size--;
     }
 
     /**
@@ -57,5 +68,18 @@ public class ArrayStorage {
 
     public int size() {
         return size;
+    }
+
+    private int getIndexOfResume(String uuid) {
+        for (int i = 0; i < size; i++) {
+            if (storage[i].getUuid().equals(uuid)) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    private void printMessNotExist(String uuid) {
+        System.out.println("Резюме " + uuid + " не существует");
     }
 }
