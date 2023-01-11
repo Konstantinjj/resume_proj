@@ -4,7 +4,7 @@ import static org.junit.Assert.*;
 
 public class ArrayStorageTest extends AbstractArrayStorageTest {
 
-    public ArrayStorageTest(Storage storage) {
+    public ArrayStorageTest() {
         super(new ArrayStorage());
     }
 }
