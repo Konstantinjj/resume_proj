@@ -7,7 +7,7 @@ import com.urise.webapp.model.Resume;
 
 import java.util.Arrays;
 
-public abstract class AbstractArrayStorage implements Storage {
+public abstract class AbstractArrayStorage extends AbstractStorage {
     protected static final int STORAGE_LIMIT = 10000;
 
     protected final Resume[] storage = new Resume[STORAGE_LIMIT];
@@ -18,42 +18,36 @@ public abstract class AbstractArrayStorage implements Storage {
         size = 0;
     }
 
-    public void update(Resume resume) {
-        int index = getIndex(resume.getUuid());
-        if (index < 0) {
-            throw new NotExistStorageException(resume.getUuid());
-        }
-        storage[index] = resume;
+    @Override
+    protected void doUpdate(Resume resume, Object key) {
+        storage[(int) key] = resume;
     }
 
-    public void save(Resume r) {
-        int index = getIndex(r.getUuid());
-        if (index >= 0) {
-            throw new ExistStorageException(r.getUuid());
-        } else if (size >= storage.length) {
+    @Override
+    protected void doSave(Resume r, Object key) {
+        if (size >= STORAGE_LIMIT) {
             throw new StorageException("База переполнена", r.getUuid());
-        } else {
-            insertResume(r, index);
-            size++;
         }
+        insertResume(r, (int) key);
+        size++;
     }
 
-    public Resume get(String uuid) {
-        int index = getIndex(uuid);
-        if (index < 0) {
-            throw new NotExistStorageException(uuid);
-        }
-        return storage[index];
+
+    @Override
+    protected Resume doGet(Object key) {
+        return storage[(int) key];
     }
 
-    public void delete(String uuid) {
-        int index = getIndex(uuid);
-        if (index < 0) {
-            throw new NotExistStorageException(uuid);
-        }
-        fillAfterDelete(index);
+    @Override
+    protected void doDelete(Object key) {
+        fillAfterDelete((int) key);
         storage[size - 1] = null;
         size--;
+    }
+
+    @Override
+    protected boolean isExist(Object key) {
+        return (int) key >= 0;
     }
 
     public Resume[] getAll() {
@@ -64,9 +58,11 @@ public abstract class AbstractArrayStorage implements Storage {
         return size;
     }
 
-    protected abstract int getIndex(String uuid);
+    protected abstract Integer getKey(String uuid);
 
     protected abstract void insertResume(Resume r, int index);
 
     protected abstract void fillAfterDelete(int index);
+
+
 }
