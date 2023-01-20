@@ -8,7 +8,7 @@ import java.util.SortedMap;
 import java.util.TreeMap;
 
 public class MapStorage extends AbstractStorage {
-    private final Map<String, Resume> map = new TreeMap<>();
+    private final SortedMap<String, Resume> map = new TreeMap<>();
 //    private Map<String, Resume> map = new HashMap<>();
 
     @Override
