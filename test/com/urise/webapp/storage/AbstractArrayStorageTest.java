@@ -40,15 +40,14 @@ public abstract class AbstractArrayStorageTest {
     public void clear() {
         storage.clear();
         assertSize(0);
-        Storage storageNull = new ArrayStorage();
-        assertArrayEquals(storageNull.getAll(), storage.getAll());
+        assertArrayEquals(new Resume[0], storage.getAll());
     }
 
     @Test
     public void update() {
         Resume resumeNew = new Resume(UUID_3);
         storage.update(resumeNew);
-        assertTrue(resumeNew == storage.get(UUID_3));
+        assertSame(resumeNew, storage.get(UUID_3));
     }
 
     @Test(expected = NotExistStorageException.class)
