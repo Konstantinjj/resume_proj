@@ -8,12 +8,11 @@ import java.util.SortedMap;
 import java.util.TreeMap;
 
 public class MapStorage extends AbstractStorage {
-    private final SortedMap<String, Resume> map = new TreeMap<>();
-//    private Map<String, Resume> map = new HashMap<>();
+    private final Map<String, Resume> map = new HashMap<>();
 
     @Override
     protected Resume doGet(Object key) {
-        return map.get(((Resume) key).getUuid());
+        return (Resume) key;
     }
 
     @Override
@@ -37,7 +36,7 @@ public class MapStorage extends AbstractStorage {
     }
 
     @Override
-    protected Object getKey(String uuid) {
+    protected Object getSearchKey(String uuid) {
         return map.get(uuid);
     }
 
@@ -48,7 +47,7 @@ public class MapStorage extends AbstractStorage {
 
     @Override
     public Resume[] getAll() {
-        return map.values().toArray(new Resume[map.size()]);
+        return map.values().toArray(new Resume[0]);
     }
 
     @Override
