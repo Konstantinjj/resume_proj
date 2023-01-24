@@ -2,39 +2,42 @@ package com.urise.webapp.storage;
 
 import com.urise.webapp.model.Resume;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
-public class MapStorage extends AbstractStorage {
+public class MapResumeStorage extends AbstractStorage {
     private final Map<String, Resume> map = new HashMap<>();
 
     @Override
     protected Resume doGet(Object key) {
-        return map.get((String) key);
+        return (Resume) key;
     }
 
     @Override
     protected void doDelete(Object key) {
-        map.remove((String) key);
+        map.remove(((Resume) key).getUuid());
     }
 
     @Override
     protected void doUpdate(Resume resume, Object key) {
-        map.put((String) key, resume);
+        map.put(resume.getUuid(), resume);
     }
 
     @Override
     protected void doSave(Resume r, Object key) {
-        map.put((String) key, r);
+        map.put(r.getUuid(), r);
     }
 
     @Override
     protected boolean isExist(Object key) {
-        return map.containsKey((String) key);
+        return key != null;
     }
 
     @Override
-    protected String getSearchKey(String uuid) {
-        return uuid;
+    protected Resume getSearchKey(String uuid) {
+        return map.get(uuid);
     }
 
     @Override
