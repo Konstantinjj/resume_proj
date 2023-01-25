@@ -4,35 +4,36 @@ import com.urise.webapp.exception.ExistStorageException;
 import com.urise.webapp.exception.NotExistStorageException;
 import com.urise.webapp.model.Resume;
 
+import java.security.Key;
 import java.util.Comparator;
 import java.util.List;
 
-public abstract class AbstractStorage implements Storage {
+public abstract class AbstractStorage<KEY> implements Storage {
 
     private static final Comparator<Resume> RESUME_COMPARATOR = Comparator.comparing(Resume::getFullName).thenComparing(Resume::getUuid);
 
     public void update(Resume resume) {
-        Object key = getExistedSearchKey(resume.getUuid());
-        doUpdate(resume, key);
+        KEY searchKey = (KEY) getExistedSearchKey(resume.getUuid());
+        doUpdate(resume, searchKey);
     }
 
     public void save(Resume r) {
-        Object key = getNotExistedSearchKey(r.getUuid());
-        doSave(r, key);
+        KEY searchKey = (KEY) getNotExistedSearchKey(r.getUuid());
+        doSave(r, searchKey);
     }
 
     public Resume get(String uuid) {
-        Object key = getExistedSearchKey(uuid);
-        return doGet(key);
+        KEY searchKey = (KEY) getExistedSearchKey(uuid);
+        return doGet(searchKey);
     }
 
     public void delete(String uuid) {
-        Object key = getExistedSearchKey(uuid);
-        doDelete(key);
+        KEY searchKey = (KEY) getExistedSearchKey(uuid);
+        doDelete(searchKey);
     }
 
     private Object getExistedSearchKey(String uuid) {
-        Object searchKey = getSearchKey(uuid);
+        KEY searchKey = (KEY) getSearchKey(uuid);
         if (!isExist(searchKey)) {
             throw new NotExistStorageException(uuid);
         }
@@ -40,7 +41,7 @@ public abstract class AbstractStorage implements Storage {
     }
 
     private Object getNotExistedSearchKey(String uuid) {
-        Object searchKey = getSearchKey(uuid);
+        KEY searchKey = (KEY) getSearchKey(uuid);
         if (isExist(searchKey)) {
             throw new ExistStorageException(uuid);
         }
@@ -56,15 +57,15 @@ public abstract class AbstractStorage implements Storage {
 
     protected abstract List<Resume> doGetAll();
 
-    protected abstract Resume doGet(Object key);
+    protected abstract Resume doGet(KEY key);
 
-    protected abstract void doDelete(Object key);
+    protected abstract void doDelete(KEY key);
 
-    protected abstract void doUpdate(Resume resume, Object key);
+    protected abstract void doUpdate(Resume resume, KEY key);
 
-    protected abstract void doSave(Resume r, Object key);
+    protected abstract void doSave(Resume r, KEY key);
 
-    protected abstract boolean isExist(Object key);
+    protected abstract boolean isExist(KEY key);
 
     protected abstract Object getSearchKey(String uuid);
 
