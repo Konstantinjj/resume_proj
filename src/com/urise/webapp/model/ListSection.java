@@ -2,10 +2,10 @@ package com.urise.webapp.model;
 
 import java.util.List;
 
-public class PointSection extends Section {
+public class ListSection extends AbstractSection {
     private final List<String> points;
 
-    public PointSection(List<String> points) {
+    public ListSection(List<String> points) {
         this.points = points;
     }
 
@@ -23,7 +23,7 @@ public class PointSection extends Section {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        PointSection that = (PointSection) o;
+        ListSection that = (ListSection) o;
 
         return points.equals(that.points);
     }
