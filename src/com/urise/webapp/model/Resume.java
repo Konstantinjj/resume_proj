@@ -1,7 +1,6 @@
 package com.urise.webapp.model;
 
-import java.util.Comparator;
-import java.util.UUID;
+import java.util.*;
 
 /**
  * Initial resume class
@@ -12,13 +11,34 @@ public class Resume implements Comparable<Resume> {
     private final String uuid;
     private final String fullName;
 
+    private final Map<ContactType, String> contacts = new HashMap<>();
+    private final Map<SectionType, Section> sections = new HashMap<>();
+
     public Resume(String fullName) {
         this(UUID.randomUUID().toString(), fullName);
+//        putInMap();
     }
 
     public Resume(String uuid, String fullName) {
         this.uuid = uuid;
         this.fullName = fullName;
+//        putInMap();
+    }
+
+    public void addContact(ContactType type, String value) {
+        contacts.put(type, value);
+    }
+
+    public void addSection(SectionType type, Section section) {
+        sections.put(type, section);
+    }
+
+    public String getContact(ContactType type) {
+        return contacts.get(type);
+    }
+
+    public Section getSection(SectionType type) {
+        return sections.get(type);
     }
 
     public String getUuid() {
@@ -60,4 +80,18 @@ public class Resume implements Comparable<Resume> {
         }
         return comp;
     }
+
+//    private void putInMap() {
+//        if (contacts.size() == 0) {
+//            return;
+//        }
+//        ;
+//        for (ContactType type : ContactType.values()) {
+//            contacts.put(type, "");
+//        }
+////        for (SectionType type : SectionType.values()) {
+////            sections.put(type, "");
+////        }
+//
+//    }
 }
