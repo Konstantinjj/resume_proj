@@ -4,22 +4,28 @@ import java.time.LocalDate;
 import java.util.Objects;
 
 public class Organization {
-    private final String header;
+    private final Link header;
     private final LocalDate startDate;
     private final LocalDate endDate;
     private final String title;
     private String description;
 
-    public Organization(String header, LocalDate startDate, LocalDate endDate, String title, String description) {
-        this.header = header;
+    public Organization(String name, String url, LocalDate startDate, LocalDate endDate, String title, String description) {
+        Objects.requireNonNull(startDate, "startDate must not be null");
+        Objects.requireNonNull(endDate, "endDate must not be null");
+        Objects.requireNonNull(title, "title must not be null");
+        this.header = new Link(name, url);
         this.startDate = startDate;
         this.endDate = endDate;
         this.title = title;
         this.description = description;
     }
 
-    public Organization(String header, LocalDate startDate, LocalDate endDate, String title) {
-        this.header = header;
+    public Organization(String name, String url, LocalDate startDate, LocalDate endDate, String title) {
+        Objects.requireNonNull(startDate, "startDate must not be null");
+        Objects.requireNonNull(endDate, "endDate must not be null");
+        Objects.requireNonNull(title, "title must not be null");
+        this.header = new Link(name, url);
         this.startDate = startDate;
         this.endDate = endDate;
         this.title = title;

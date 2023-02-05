@@ -31,23 +31,23 @@ public class ResumeTestData {
 
         LocalDate startDate = LocalDate.of(1997, 9, 1);
         LocalDate endDate = LocalDate.of(1998, 3, 1);
-        experienceSections.add(new Organization("Alcatel", startDate, endDate, "TestExp1", "Descr1"));
+        experienceSections.add(new Organization("Alcatel", "urlExp1", startDate, endDate, "TestExp1", "Descr1"));
 
         startDate = LocalDate.of(2008, 6, 1);
         endDate = LocalDate.of(2010, 12, 1);
-        experienceSections.add(new Organization("Yota", startDate, endDate, "TestExp2", "Descr2"));
+        experienceSections.add(new Organization("Yota", "urlExp2", startDate, endDate, "TestExp2", "Descr2"));
 
         startDate = LocalDate.of(2014, 10, 1);
         endDate = LocalDate.of(2016, 1, 1);
-        experienceSections.add(new Organization("Wrike", startDate, endDate, "TestExp3", "Descr3"));
+        experienceSections.add(new Organization("Wrike", "urlExp3", startDate, endDate, "TestExp3", "Descr3"));
 
         startDate = LocalDate.of(2011, 3, 1);
         endDate = LocalDate.of(2011, 4, 1);
-        educationSections.add(new Organization("Luxoft", startDate, endDate, "TestEduc1"));
+        educationSections.add(new Organization("Luxoft", "urlEduc1", startDate, endDate, "TestEduc1"));
 
         startDate = LocalDate.of(2013, 3, 1);
         endDate = LocalDate.of(2013, 5, 1);
-        educationSections.add(new Organization("Coursera", startDate, endDate, "TestEduc2"));
+        educationSections.add(new Organization("Coursera", "urlEduc2", startDate, endDate, "TestEduc2"));
 
         resume.addSection(SectionType.EXPERIENCE, new OrganizationSection(experienceSections));
         resume.addSection(SectionType.EDUCATION, new OrganizationSection(educationSections));
