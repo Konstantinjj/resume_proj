@@ -28,26 +28,41 @@ public class ResumeTestData {
     private static void addOrganizationSections(Resume resume) {
         List<Organization> experienceSections = new ArrayList<>();
         List<Organization> educationSections = new ArrayList<>();
+        List<Paragraph> paragraphsAlcatel = new ArrayList<>();
 
         LocalDate startDate = LocalDate.of(1997, 9, 1);
         LocalDate endDate = LocalDate.of(1998, 3, 1);
-        experienceSections.add(new Organization("Alcatel", "urlExp1", startDate, endDate, "TestExp1", "Descr1"));
+        paragraphsAlcatel.add(new Paragraph(startDate, endDate, "TitleExp1", "Descr1"));
 
+        startDate = LocalDate.of(1998, 3, 1);
+        endDate = LocalDate.of(2000, 3, 1);
+        paragraphsAlcatel.add(new Paragraph(startDate, endDate, "TitleExp2", "Descr2"));
+
+        List<Paragraph> paragraphsYota = new ArrayList<>();
         startDate = LocalDate.of(2008, 6, 1);
         endDate = LocalDate.of(2010, 12, 1);
-        experienceSections.add(new Organization("Yota", "urlExp2", startDate, endDate, "TestExp2", "Descr2"));
+        paragraphsYota.add(new Paragraph(startDate, endDate, "TitleExp3", "Descr3"));
 
+        List<Paragraph> paragraphsWrike = new ArrayList<>();
         startDate = LocalDate.of(2014, 10, 1);
         endDate = LocalDate.of(2016, 1, 1);
-        experienceSections.add(new Organization("Wrike", "urlExp3", startDate, endDate, "TestExp3", "Descr3"));
+        paragraphsWrike.add(new Paragraph(startDate, endDate, "TitleExp4", "Descr4"));
 
+        List<Paragraph> paragraphsLuxoft = new ArrayList<>();
         startDate = LocalDate.of(2011, 3, 1);
         endDate = LocalDate.of(2011, 4, 1);
-        educationSections.add(new Organization("Luxoft", "urlEduc1", startDate, endDate, "TestEduc1"));
+        paragraphsLuxoft.add(new Paragraph(startDate, endDate, "TitleExp5", "Descr5"));
 
+        List<Paragraph> paragraphsCoursera = new ArrayList<>();
         startDate = LocalDate.of(2013, 3, 1);
         endDate = LocalDate.of(2013, 5, 1);
-        educationSections.add(new Organization("Coursera", "urlEduc2", startDate, endDate, "TestEduc2"));
+        paragraphsCoursera.add(new Paragraph(startDate, endDate, "TitleExp6", "Descr6"));
+
+        experienceSections.add(new Organization("Alcatel", "urlExp1", paragraphsAlcatel));
+        experienceSections.add(new Organization("Yota", "urlExp2", paragraphsYota));
+        experienceSections.add(new Organization("Wrike", "urlExp3", paragraphsWrike));
+        educationSections.add(new Organization("Luxoft", "urlEduc1", paragraphsLuxoft));
+        educationSections.add(new Organization("Coursera", "urlEduc2", paragraphsCoursera));
 
         resume.addSection(SectionType.EXPERIENCE, new OrganizationSection(experienceSections));
         resume.addSection(SectionType.EDUCATION, new OrganizationSection(educationSections));
