@@ -25,6 +25,14 @@ public class ResumeTestData {
 
     }
 
+    public static Resume createResume(String uuid, String fullName) {
+        Resume resume = new Resume(uuid, fullName);
+        addContact(resume);
+        addListSections(resume);
+        addOrganizationSections(resume);
+        return resume;
+    }
+
     private static void addOrganizationSections(Resume resume) {
         List<Organization> experienceSections = new ArrayList<>();
         List<Organization> educationSections = new ArrayList<>();

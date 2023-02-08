@@ -16,16 +16,12 @@ public class Resume implements Comparable<Resume> {
 
     public Resume(String fullName) {
         this(UUID.randomUUID().toString(), fullName);
-//        putInMap();
     }
 
     public Resume(String uuid, String fullName) {
         this.uuid = uuid;
         this.fullName = fullName;
-//        putInMap();
     }
-
-
 
     public void addContact(ContactType type, String value) {
         contacts.put(type, value);
@@ -82,18 +78,4 @@ public class Resume implements Comparable<Resume> {
         }
         return comp;
     }
-
-//    private void putInMap() {
-//        if (contacts.size() == 0) {
-//            return;
-//        }
-//        ;
-//        for (ContactType type : ContactType.values()) {
-//            contacts.put(type, "");
-//        }
-////        for (SectionType type : SectionType.values()) {
-////            sections.put(type, "");
-////        }
-//
-//    }
 }
