@@ -1,6 +1,7 @@
 package com.urise.webapp.model;
 
 public class TextSection extends AbstractSection {
+    private static final long serialVersionUID = 1L;
     private final String description;
 
     public TextSection(String description) {

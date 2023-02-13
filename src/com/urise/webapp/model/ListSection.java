@@ -3,6 +3,7 @@ package com.urise.webapp.model;
 import java.util.List;
 
 public class ListSection extends AbstractSection {
+    private static final long serialVersionUID = 1L;
     private final List<String> points;
 
     public ListSection(List<String> points) {
