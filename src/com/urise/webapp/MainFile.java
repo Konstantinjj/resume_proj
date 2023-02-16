@@ -32,19 +32,24 @@ public class MainFile {
         }
 
         File catalog = new File("D:\\ProgramFiles\\java\\BaseJava\\basejava\\src\\com\\urise\\webapp");
-        printNameFilesInCatalog(catalog);
+        printNameFilesInCatalog(catalog, 1);
     }
 
-    public static void printNameFilesInCatalog(File catalog) {
+    public static void printNameFilesInCatalog(File catalog, int offset) {
         File[] files = catalog.listFiles();
+        String off = "";
+        for (int i = 0; i < offset; i++) {
+            off += " ";
+        }
         if (files == null) {
             return;
         }
         for (File file : files) {
             if (file.isDirectory()) {
-                printNameFilesInCatalog(file);
+                System.out.println(off + "Dir:" + file.getName());
+                printNameFilesInCatalog(file, offset + 2);
             } else if (file.isFile()) {
-                System.out.println(file.getName());
+                System.out.println(off + "File:" + file.getName());
             }
         }
     }
