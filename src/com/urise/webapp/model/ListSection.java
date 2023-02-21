@@ -4,7 +4,10 @@ import java.util.List;
 
 public class ListSection extends AbstractSection {
     private static final long serialVersionUID = 1L;
-    private final List<String> points;
+    private List<String> points;
+
+    public ListSection() {
+    }
 
     public ListSection(List<String> points) {
         this.points = points;

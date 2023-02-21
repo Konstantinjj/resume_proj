@@ -8,6 +8,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.io.File;
+import java.util.Arrays;
 import java.util.List;
 
 import static org.junit.Assert.*;
@@ -97,21 +98,9 @@ public abstract class AbstractStorageTest {
 
     @Test
     public void getAll() {
-        List<Resume> array = storage.getAllSorted();
-        assertEquals(3, array.size());
-        assertEquals(storage.get("uuid1"), array.get(0));
-        assertEquals(storage.get("uuid2"), array.get(1));
-        assertEquals(storage.get("uuid3"), array.get(2));
-
-        Resume expectedResumeOne = new Resume(UUID_1, "Name1");
-        Resume expectedResumeTwo = new Resume(UUID_2, "Name2");
-        Resume expectedResumeThree = new Resume(UUID_3, "Name3");
-        Resume[] expected = new Resume[3];
-        expected[0] = expectedResumeOne;
-        expected[1] = expectedResumeTwo;
-        expected[2] = expectedResumeThree;
-
-        assertArrayEquals(expected, storage.getAllSorted().toArray());
+        List<Resume> list = storage.getAllSorted();
+        assertEquals(3, list.size());
+        assertEquals(list, Arrays.asList(RESUME_1, RESUME_2, RESUME_3));
     }
 
     @Test

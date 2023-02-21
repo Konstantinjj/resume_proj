@@ -1,19 +1,25 @@
 package com.urise.webapp.model;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+@XmlAccessorType(XmlAccessType.FIELD)
 public class Organization implements Serializable {
     private static final long serialVersionUID = 1L;
-    private final Link header;
+    private Link header;
     private List<Paragraph> paragraphs;
 
     public Organization(String name, String url, List<Paragraph> paragraphs) {
         this.header = new Link(name, url);
         this.paragraphs = paragraphs;
+    }
+
+    public Organization() {
     }
 
     @Override
