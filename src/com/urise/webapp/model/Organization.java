@@ -14,12 +14,25 @@ public class Organization implements Serializable {
     private Link header;
     private List<Paragraph> paragraphs;
 
+    public Organization(Link header, List<Paragraph> paragraphs) {
+        this.header = header;
+        this.paragraphs = paragraphs;
+    }
+
     public Organization(String name, String url, List<Paragraph> paragraphs) {
         this.header = new Link(name, url);
         this.paragraphs = paragraphs;
     }
 
     public Organization() {
+    }
+
+    public Link getHeader() {
+        return header;
+    }
+
+    public List<Paragraph> getParagraphs() {
+        return paragraphs;
     }
 
     @Override

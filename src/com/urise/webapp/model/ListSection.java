@@ -13,7 +13,7 @@ public class ListSection extends AbstractSection {
         this.points = points;
     }
 
-    public List<String> getPoint() {
+    public List<String> getPoints() {
         return points;
     }
 

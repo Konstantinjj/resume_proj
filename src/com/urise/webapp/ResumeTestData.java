@@ -11,6 +11,7 @@ public class ResumeTestData {
         Resume resume = new Resume("TestResume");
 
         addContact(resume);
+        addTextSections(resume);
         addListSections(resume);
         addOrganizationSections(resume);
 
@@ -27,10 +28,16 @@ public class ResumeTestData {
 
     public static Resume createResume(String uuid, String fullName) {
         Resume resume = new Resume(uuid, fullName);
+        addTextSections(resume);
         addContact(resume);
         addListSections(resume);
         addOrganizationSections(resume);
         return resume;
+    }
+
+    private static void addTextSections(Resume resume) {
+        resume.addSection(SectionType.PERSONAL, new TextSection("personal"));
+        resume.addSection(SectionType.OBJECTIVE, new TextSection("objective"));
     }
 
     private static void addOrganizationSections(Resume resume) {
@@ -78,14 +85,14 @@ public class ResumeTestData {
     }
 
     private static void addListSections(Resume resume) {
-        List<String> personal = new ArrayList<>();
-        List<String> objective = new ArrayList<>();
+//        List<String> personal = new ArrayList<>();
+//        List<String> objective = new ArrayList<>();
         List<String> achievements = new ArrayList<>();
         List<String> qualifications = new ArrayList<>();
 
-        personal.add("personal_one");
-        objective.add("objective_one");
-        objective.add("objective_two");
+//        personal.add("personal_one");
+//        objective.add("objective_one");
+//        objective.add("objective_two");
 
         achievements.add("achievement_one");
         achievements.add("achievement_two");
@@ -96,8 +103,8 @@ public class ResumeTestData {
         qualifications.add("qualification_three");
         qualifications.add("qualification_four");
 
-        resume.addSection(SectionType.PERSONAL, new ListSection(personal));
-        resume.addSection(SectionType.OBJECTIVE, new ListSection(objective));
+//        resume.addSection(SectionType.PERSONAL, new ListSection(personal));
+//        resume.addSection(SectionType.OBJECTIVE, new ListSection(objective));
         resume.addSection(SectionType.ACHIEVEMENT, new ListSection(achievements));
         resume.addSection(SectionType.QUALIFICATIONS, new ListSection(qualifications));
     }
