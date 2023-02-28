@@ -13,18 +13,21 @@ public class DataStreamSerializer implements StreamSerializer {
         try (DataOutputStream dos = new DataOutputStream(os)) {
             dos.writeUTF(r.getUuid());
             dos.writeUTF(r.getFullName());
-            Map<ContactType, String> contacts = r.getContacts();
-            writeWithException(contacts.entrySet(), dos, contactTypeStringEntry -> {
+            writeWithException(r.getContacts().entrySet(), dos, contactTypeStringEntry -> {
                 dos.writeUTF(contactTypeStringEntry.getKey().name());
                 dos.writeUTF(contactTypeStringEntry.getValue());
             });
 
-            Map<SectionType, AbstractSection> sections = r.getSections();
-            dos.writeInt(sections.size());
-            for (Map.Entry<SectionType, AbstractSection> entry : sections.entrySet()) {
-                dos.writeUTF(entry.getKey().name());
-                writeSection(entry, dos);
-            }
+            writeWithException(r.getSections().entrySet(), dos, entry -> {
+                SectionType type = entry.getKey();
+                dos.writeUTF(type.name());
+                AbstractSection section = entry.getValue();
+                switch (type) {
+                    case PERSONAL, OBJECTIVE -> writeTextSection(dos, (TextSection) section);
+                    case ACHIEVEMENT, QUALIFICATIONS -> writeListSection(dos, (ListSection) section);
+                    case EXPERIENCE, EDUCATION -> writeOrganizationSection(dos, (OrganizationSection) section);
+                }
+            });
         }
     }
 
@@ -55,45 +58,31 @@ public class DataStreamSerializer implements StreamSerializer {
         }
     }
 
-    private void writeSection(Map.Entry<SectionType, AbstractSection> entry, DataOutputStream dos) throws IOException {
-        SectionType sectionType = entry.getKey();
-        switch (sectionType) {
-            case PERSONAL, OBJECTIVE -> writeTextSection(dos, (TextSection) entry.getValue());
-            case ACHIEVEMENT, QUALIFICATIONS -> writeListSection(dos, (ListSection) entry.getValue());
-            case EXPERIENCE, EDUCATION -> writeOrganizationSection(dos, (OrganizationSection) entry.getValue());
-        }
-    }
-
     private void writeTextSection(DataOutputStream dos, TextSection textSection) throws IOException {
         dos.writeUTF(textSection.getDescription());
     }
 
     private void writeListSection(DataOutputStream dos, ListSection listSection) throws IOException {
-        List<String> list = listSection.getPoints();
-        dos.writeInt(list.size());
-        for (String s : list) {
-            dos.writeUTF(s);
-        }
+        writeWithException(listSection.getPoints(), dos, dos::writeUTF);
     }
 
     private void writeOrganizationSection(DataOutputStream dos, OrganizationSection organizationSection) throws IOException {
-        List<Organization> organizations = organizationSection.getOrganizations();
-        dos.writeInt(organizations.size());
-
-        for (Organization organization : organizations) {
+        writeWithException(organizationSection.getOrganizations(), dos, organization -> {
             dos.writeUTF(organization.getHeader().getName());
             String url = organization.getHeader().getUrl();
             dos.writeUTF((url != null) ? url : "");
-            List<Paragraph> paragraphs = organization.getParagraphs();
-            dos.writeInt(paragraphs.size());
-            for (Paragraph paragraph : paragraphs) {
-                writeLocalDate(dos, paragraph.getStartDate());
-                writeLocalDate(dos, paragraph.getEndDate());
-                dos.writeUTF(paragraph.getTitle());
-                String description = paragraph.getDescription();
-                dos.writeUTF((description != null) ? description : "");
-            }
-        }
+            writeParagraphs(dos, organization.getParagraphs());
+        });
+    }
+
+    private void writeParagraphs(DataOutputStream dos, List<Paragraph> paragraphs) throws IOException {
+        writeWithException(paragraphs, dos, paragraph -> {
+            writeLocalDate(dos, paragraph.getStartDate());
+            writeLocalDate(dos, paragraph.getEndDate());
+            dos.writeUTF(paragraph.getTitle());
+            String description = paragraph.getDescription();
+            dos.writeUTF((description != null) ? description : "");
+        });
     }
 
     private void addSection(Resume r, DataInputStream dis) throws IOException {
