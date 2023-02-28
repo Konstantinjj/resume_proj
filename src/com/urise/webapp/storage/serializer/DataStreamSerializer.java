@@ -57,12 +57,10 @@ public class DataStreamSerializer implements StreamSerializer {
     }
 
     private void writeTextSection(DataOutputStream dos, TextSection textSection) throws IOException {
-        dos.writeUTF("TextSection");
         dos.writeUTF(textSection.getDescription());
     }
 
     private void writeListSection(DataOutputStream dos, ListSection listSection) throws IOException {
-        dos.writeUTF("ListSection");
         List<String> list = listSection.getPoints();
         dos.writeInt(list.size());
         for (String s : list) {
@@ -71,30 +69,31 @@ public class DataStreamSerializer implements StreamSerializer {
     }
 
     private void writeOrganizationSection(DataOutputStream dos, OrganizationSection organizationSection) throws IOException {
-        dos.writeUTF("OrganizationSection");
         List<Organization> organizations = organizationSection.getOrganizations();
         dos.writeInt(organizations.size());
 
         for (Organization organization : organizations) {
             dos.writeUTF(organization.getHeader().getName());
-            dos.writeUTF(organization.getHeader().getUrl());
+            String url = organization.getHeader().getUrl();
+            dos.writeUTF((url != null) ? url : "");
             List<Paragraph> paragraphs = organization.getParagraphs();
             dos.writeInt(paragraphs.size());
             for (Paragraph paragraph : paragraphs) {
                 writeLocalDate(dos, paragraph.getStartDate());
                 writeLocalDate(dos, paragraph.getEndDate());
                 dos.writeUTF(paragraph.getTitle());
-                dos.writeUTF(paragraph.getDescription());
+                String description = paragraph.getDescription();
+                dos.writeUTF((description != null) ? description : "");
             }
         }
     }
 
     private void addSection(Resume r, DataInputStream dis) throws IOException {
         SectionType st = SectionType.valueOf(dis.readUTF());
-        switch (dis.readUTF()) {
-            case "TextSection" -> addTextSection(r, dis, st);
-            case "ListSection" -> addListSection(r, dis, st);
-            case "OrganizationSection" -> addOrganizationSection(r, dis, st);
+        switch (st) {
+            case PERSONAL, OBJECTIVE -> addTextSection(r, dis, st);
+            case ACHIEVEMENT, QUALIFICATIONS -> addListSection(r, dis, st);
+            case EXPERIENCE, EDUCATION -> addOrganizationSection(r, dis, st);
         }
     }
 
@@ -117,12 +116,24 @@ public class DataStreamSerializer implements StreamSerializer {
         Link link;
         for (int i = 0; i < size; i++) {
 
-            link = new Link(dis.readUTF(), dis.readUTF());
+//            link = new Link(dis.readUTF(), dis.readUTF());
+            String name = dis.readUTF();
+            String url = dis.readUTF();
+            if (url.equals("")) {
+                link = new Link(name, null);
+            } else {
+                link = new Link(name, url);
+            }
 
             int parSize = dis.readInt();
             List<Paragraph> paragraphs = new ArrayList<>();
             for (int j = 0; j < parSize; j++) {
-                paragraphs.add(new Paragraph(readLocalDate(dis), readLocalDate(dis), dis.readUTF(), dis.readUTF()));
+                LocalDate startDate = readLocalDate(dis);
+                LocalDate endDate = readLocalDate(dis);
+                String title = dis.readUTF();
+                String description = dis.readUTF();
+                if (description.equals("")) description = null;
+                paragraphs.add(new Paragraph(startDate, endDate, title, description));
             }
             organizations.add(new Organization(link, paragraphs));
         }
