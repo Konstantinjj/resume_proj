@@ -4,9 +4,7 @@ import com.urise.webapp.model.*;
 
 import java.io.*;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class DataStreamSerializer implements StreamSerializer {
 
@@ -16,11 +14,10 @@ public class DataStreamSerializer implements StreamSerializer {
             dos.writeUTF(r.getUuid());
             dos.writeUTF(r.getFullName());
             Map<ContactType, String> contacts = r.getContacts();
-            dos.writeInt(contacts.size());
-            for (Map.Entry<ContactType, String> entry : contacts.entrySet()) {
-                dos.writeUTF(entry.getKey().name());
-                dos.writeUTF(entry.getValue());
-            }
+            writeWithException(contacts.entrySet(), dos, contactTypeStringEntry -> {
+                dos.writeUTF(contactTypeStringEntry.getKey().name());
+                dos.writeUTF(contactTypeStringEntry.getValue());
+            });
 
             Map<SectionType, AbstractSection> sections = r.getSections();
             dos.writeInt(sections.size());
@@ -44,6 +41,17 @@ public class DataStreamSerializer implements StreamSerializer {
                 addSection(resume, dis);
             }
             return resume;
+        }
+    }
+
+    private interface Writer<T> {
+        void write(T t) throws IOException;
+    }
+
+    private void writeWithException(Set<Map.Entry<ContactType, String>> collection, DataOutputStream dos, Writer<Map.Entry<ContactType, String>> writer) throws IOException {
+        dos.writeInt(collection.size());
+        for (Map.Entry<ContactType, String> item : collection) {
+            writer.write(item);
         }
     }
 
@@ -116,7 +124,6 @@ public class DataStreamSerializer implements StreamSerializer {
         Link link;
         for (int i = 0; i < size; i++) {
 
-//            link = new Link(dis.readUTF(), dis.readUTF());
             String name = dis.readUTF();
             String url = dis.readUTF();
             if (url.equals("")) {
