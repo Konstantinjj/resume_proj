@@ -48,9 +48,9 @@ public class DataStreamSerializer implements StreamSerializer {
         void write(T t) throws IOException;
     }
 
-    private void writeWithException(Set<Map.Entry<ContactType, String>> collection, DataOutputStream dos, Writer<Map.Entry<ContactType, String>> writer) throws IOException {
+    private <T> void writeWithException(Collection<T> collection, DataOutputStream dos, Writer<T> writer) throws IOException {
         dos.writeInt(collection.size());
-        for (Map.Entry<ContactType, String> item : collection) {
+        for (T item : collection) {
             writer.write(item);
         }
     }
