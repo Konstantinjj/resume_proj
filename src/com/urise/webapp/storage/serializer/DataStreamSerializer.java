@@ -35,14 +35,8 @@ public class DataStreamSerializer implements StreamSerializer {
     public Resume doRead(InputStream is) throws IOException {
         try (DataInputStream dis = new DataInputStream(is)) {
             Resume resume = new Resume(dis.readUTF(), dis.readUTF());
-            int size = dis.readInt();
-            for (int i = 0; i < size; i++) {
-                resume.addContact(ContactType.valueOf(dis.readUTF()), dis.readUTF());
-            }
-            size = dis.readInt();
-            for (int i = 0; i < size; i++) {
-                addSection(resume, dis);
-            }
+            readWithException(dis, () -> resume.addContact(ContactType.valueOf(dis.readUTF()), dis.readUTF()));
+            readWithException(dis, () -> addSection(resume, dis));
             return resume;
         }
     }
@@ -83,6 +77,17 @@ public class DataStreamSerializer implements StreamSerializer {
             String description = paragraph.getDescription();
             dos.writeUTF((description != null) ? description : "");
         });
+    }
+
+    private interface Reader {
+        void read() throws IOException;
+    }
+
+    private void readWithException(DataInputStream dis, Reader reader) throws IOException {
+        int size = dis.readInt();
+        for (int i = 0; i < size; i++) {
+            reader.read();
+        }
     }
 
     private void addSection(Resume r, DataInputStream dis) throws IOException {
