@@ -38,7 +38,6 @@ public class DataStreamSerializer implements StreamSerializer {
             readWithException(dis, () -> resume.addContact(ContactType.valueOf(dis.readUTF()), dis.readUTF()));
             readWithException(dis, () -> addSection(resume, dis));
             return resume;
-
         }
     }
 
