@@ -144,6 +144,7 @@ public class DataStreamSerializer implements StreamSerializer {
     private void writeLocalDate(DataOutputStream dos, LocalDate ld) throws IOException {
         dos.writeInt(ld.getYear());
         dos.writeInt(ld.getMonth().getValue());
+
     }
 
     private LocalDate readLocalDate(DataInputStream dis) throws IOException {
