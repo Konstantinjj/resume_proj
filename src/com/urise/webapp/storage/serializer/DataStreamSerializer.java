@@ -94,8 +94,11 @@ public class DataStreamSerializer implements StreamSerializer {
         SectionType st = SectionType.valueOf(dis.readUTF());
         switch (st) {
             case PERSONAL, OBJECTIVE -> addTextSection(r, dis, st);
-            case ACHIEVEMENT, QUALIFICATIONS -> addListSection(r, dis, st);
-            case EXPERIENCE, EDUCATION -> addOrganizationSection(r, dis, st);
+            case ACHIEVEMENT, QUALIFICATIONS -> r.addSection(st, new ListSection(addSection(dis, dis::readUTF)));
+            case EXPERIENCE, EDUCATION -> r.addSection(st, new OrganizationSection(
+                    addSection(dis, () -> new Organization(new Link(dis.readUTF(), dis.readUTF()),
+                            addSection(dis, () -> new Paragraph(readLocalDate(dis), readLocalDate(dis), dis.readUTF(), dis.readUTF()))))
+            ));
         }
     }
 
@@ -103,42 +106,17 @@ public class DataStreamSerializer implements StreamSerializer {
         r.addSection(st, new TextSection(dis.readUTF()));
     }
 
-    private void addListSection(Resume r, DataInputStream dis, SectionType st) throws IOException {
-        List<String> items = new ArrayList<>();
-        int size = dis.readInt();
-        for (int i = 0; i < size; i++) {
-            items.add(dis.readUTF());
-        }
-        r.addSection(st, new ListSection(items));
+    private interface ElementReader<T> {
+        T read() throws IOException;
     }
 
-    private void addOrganizationSection(Resume r, DataInputStream dis, SectionType st) throws IOException {
-        List<Organization> organizations = new ArrayList<>();
+    private <T> List<T> addSection(DataInputStream dis, ElementReader<T> reader) throws IOException {
+        List<T> items = new ArrayList<>();
         int size = dis.readInt();
-        Link link;
         for (int i = 0; i < size; i++) {
-
-            String name = dis.readUTF();
-            String url = dis.readUTF();
-            if (url.equals("")) {
-                link = new Link(name, null);
-            } else {
-                link = new Link(name, url);
-            }
-
-            int parSize = dis.readInt();
-            List<Paragraph> paragraphs = new ArrayList<>();
-            for (int j = 0; j < parSize; j++) {
-                LocalDate startDate = readLocalDate(dis);
-                LocalDate endDate = readLocalDate(dis);
-                String title = dis.readUTF();
-                String description = dis.readUTF();
-                if (description.equals("")) description = null;
-                paragraphs.add(new Paragraph(startDate, endDate, title, description));
-            }
-            organizations.add(new Organization(link, paragraphs));
+            items.add(reader.read());
         }
-        r.addSection(st, new OrganizationSection(organizations));
+        return items;
     }
 
     private void writeLocalDate(DataOutputStream dos, LocalDate ld) throws IOException {
