@@ -18,23 +18,16 @@ public class MainStream {
     }
 
     private static int minValue(int[] values) {
-        final int[] result = {0};
-        Arrays.stream(values)
-                .boxed()
+        return Arrays.stream(values)
                 .distinct()
                 .sorted()
-                .mapToInt(value -> value)
-                .forEach(value -> result[0] = result[0] * 10 + value);
-        return result[0];
+                .reduce((left, right) -> left * 10 + right)
+                .orElseThrow();
     }
 
     public static List<Integer> oddOrEven(List<Integer> integers) {
-        int sum = integers.stream().mapToInt(value -> value).sum();
-        if (sum % 2 == 0) {
-            return integers.stream().filter(integer -> integer % 2 != 0).collect(Collectors.toList());
-        } else {
-            return integers.stream().filter(integer -> integer % 2 == 0).collect(Collectors.toList());
-        }
+        boolean even = integers.stream().mapToInt(value -> value).sum() % 2 == 0;
+        return integers.stream().filter(integer -> (integer % 2 != 0) == even).collect(Collectors.toList());
     }
 }
 
