@@ -2,10 +2,13 @@ package com.urise.webapp.model;
 
 public class TextSection extends AbstractSection {
     private static final long serialVersionUID = 1L;
-    private final String description;
+    private String description;
 
     public TextSection(String description) {
         this.description = description;
+    }
+
+    public TextSection() {
     }
 
     public String getDescription() {
