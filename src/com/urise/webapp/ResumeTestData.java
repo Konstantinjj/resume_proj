@@ -28,10 +28,10 @@ public class ResumeTestData {
 
     public static Resume createResume(String uuid, String fullName) {
         Resume resume = new Resume(uuid, fullName);
-        addTextSections(resume);
-        addContact(resume);
-        addListSections(resume);
-        addOrganizationSections(resume);
+//        addTextSections(resume);
+//        addContact(resume);
+//        addListSections(resume);
+//        addOrganizationSections(resume);
         return resume;
     }
 
