@@ -87,13 +87,9 @@ public class SqlStorage implements Storage {
         });
     }
 
-    private void executeUpdate(PreparedStatement st, String uuid) {
-        try {
+    private void executeUpdate(PreparedStatement st, String uuid) throws SQLException {
             if (st.executeUpdate() == 0) {
                 throw new NotExistStorageException(uuid);
             }
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
     }
 }

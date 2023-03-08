@@ -16,7 +16,7 @@ public class SqlHelper {
     }
 
     public void runSql(String sql) {
-        runSql(sql, st -> st.execute());
+        runSql(sql, PreparedStatement::execute);
     }
 
     public interface SqlStatement<T> {
@@ -28,7 +28,11 @@ public class SqlHelper {
              PreparedStatement ps = conn.prepareStatement(sql)) {
             return statement.runSql(ps);
         } catch (SQLException e) {
-            throw new ExistStorageException(null);
+            if (e.getSQLState().equals("23505")) {
+                throw new ExistStorageException(null);
+            } else {
+                throw new StorageException(e);
+            }
         }
     }
 }
