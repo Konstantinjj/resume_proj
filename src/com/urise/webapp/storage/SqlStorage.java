@@ -2,6 +2,7 @@ package com.urise.webapp.storage;
 
 import com.urise.webapp.exception.NotExistStorageException;
 import com.urise.webapp.exception.StorageException;
+import com.urise.webapp.model.ContactType;
 import com.urise.webapp.model.Resume;
 import com.urise.webapp.sql.ConnectionFactory;
 import com.urise.webapp.sql.SqlHelper;
@@ -10,6 +11,7 @@ import java.awt.*;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class SqlStorage implements Storage {
     public final SqlHelper sqlHelper;
@@ -41,17 +43,34 @@ public class SqlStorage implements Storage {
             st.execute();
             return null;
         });
+        for (Map.Entry<ContactType, String> e : r.getContacts().entrySet()) {
+            sqlHelper.runSql("INSERT INTO contact (resume_uuid, type, value) VALUES (?, ?, ?)", st -> {
+                st.setString(1, r.getUuid());
+                st.setString(2, e.getKey().name());
+                st.setString(3, e.getValue());
+                st.execute();
+                return null;
+            });
+        }
     }
 
     @Override
     public Resume get(String uuid) {
-        return sqlHelper.runSql("SELECT * FROM resume r WHERE r.uuid =?", st -> {
+        return sqlHelper.runSql("SELECT * FROM resume r LEFT JOIN contact c" +
+                " ON r.uuid = c.resume_uuid WHERE r.uuid =?\n", st -> {
             st.setString(1, uuid);
             ResultSet rs = st.executeQuery();
             if (!rs.next()) {
                 throw new NotExistStorageException(uuid);
             }
-            return new Resume(uuid, rs.getString("full_name"));
+            Resume r = new Resume(uuid, rs.getString("full_name"));
+            do {
+                String value = rs.getString("value");
+                ContactType type = ContactType.valueOf(rs.getString("type"));
+                r.addContact(type, value);
+            } while (rs.next());
+
+            return r;
         });
     }
 
@@ -88,8 +107,8 @@ public class SqlStorage implements Storage {
     }
 
     private void executeUpdate(PreparedStatement st, String uuid) throws SQLException {
-            if (st.executeUpdate() == 0) {
-                throw new NotExistStorageException(uuid);
-            }
+        if (st.executeUpdate() == 0) {
+            throw new NotExistStorageException(uuid);
+        }
     }
 }
