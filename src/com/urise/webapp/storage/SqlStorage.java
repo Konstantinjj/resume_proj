@@ -37,21 +37,24 @@ public class SqlStorage implements Storage {
 
     @Override
     public void save(Resume r) {
-        sqlHelper.runSql("INSERT INTO resume (uuid, full_name) VALUES (?, ?)", st -> {
-            st.setString(1, r.getUuid());
-            st.setString(2, r.getFullName());
-            st.execute();
-            return null;
-        });
-        for (Map.Entry<ContactType, String> e : r.getContacts().entrySet()) {
-            sqlHelper.runSql("INSERT INTO contact (resume_uuid, type, value) VALUES (?, ?, ?)", st -> {
-                st.setString(1, r.getUuid());
-                st.setString(2, e.getKey().name());
-                st.setString(3, e.getValue());
-                st.execute();
-                return null;
-            });
-        }
+        sqlHelper.transactionalExecute(conn -> {
+                    try (PreparedStatement ps = conn.prepareStatement("INSERT INTO resume (uuid, full_name) VALUES (?,?)")) {
+                        ps.setString(1, r.getUuid());
+                        ps.setString(2, r.getFullName());
+                        ps.execute();
+                    }
+                    try (PreparedStatement ps = conn.prepareStatement("INSERT INTO contact (resume_uuid, type, value) VALUES (?,?,?)")) {
+                        for (Map.Entry<ContactType, String> e : r.getContacts().entrySet()) {
+                            ps.setString(1, r.getUuid());
+                            ps.setString(2, e.getKey().name());
+                            ps.setString(3, e.getValue());
+                            ps.addBatch();
+                        }
+                        ps.executeBatch();
+                    }
+                    return null;
+                }
+        );
     }
 
     @Override
