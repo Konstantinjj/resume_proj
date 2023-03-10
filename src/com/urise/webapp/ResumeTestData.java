@@ -29,7 +29,7 @@ public class ResumeTestData {
     public static Resume createResume(String uuid, String fullName) {
         Resume resume = new Resume(uuid, fullName);
 //        addTextSections(resume);
-//        addContact(resume);
+        addContact(resume);
 //        addListSections(resume);
 //        addOrganizationSections(resume);
         return resume;
@@ -115,7 +115,7 @@ public class ResumeTestData {
         resume.addContact(ContactType.MAIL, String.valueOf(new TextSection("gkislin@yandex.ru")));
         resume.addContact(ContactType.LINKEDIN, String.valueOf(new TextSection("URL LinkedIn")));
         resume.addContact(ContactType.GITHUB, String.valueOf(new TextSection("URL GitHub")));
-        resume.addContact(ContactType.STACKOVERFLOW, String.valueOf(new TextSection(" URL Профиль Stackoverflow")));
+        resume.addContact(ContactType.STACKOVERFLOW, String.valueOf(new TextSection("URL Профиль Stackoverflow")));
         resume.addContact(ContactType.HOME_PAGE, String.valueOf(new TextSection("URL Домашняя страница")));
     }
 }
