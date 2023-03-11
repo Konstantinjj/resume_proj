@@ -1,13 +1,10 @@
 package com.urise.webapp.storage;
 
 import com.urise.webapp.exception.NotExistStorageException;
-import com.urise.webapp.exception.StorageException;
 import com.urise.webapp.model.ContactType;
 import com.urise.webapp.model.Resume;
-import com.urise.webapp.sql.ConnectionFactory;
 import com.urise.webapp.sql.SqlHelper;
 
-import java.awt.*;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -59,15 +56,19 @@ public class SqlStorage implements Storage {
 
     @Override
     public Resume get(String uuid) {
-        return sqlHelper.runSql("SELECT * FROM resume r LEFT JOIN contact c" +
-                " ON r.uuid = c.resume_uuid WHERE r.uuid =?\n", st -> {
+        return sqlHelper.runSql("SELECT * FROM resume r " +
+                                    "LEFT JOIN contact c " +
+                                    "ON r.uuid = c.resume_uuid " +
+                                    "WHERE r.uuid =?\n", st -> {
             st.setString(1, uuid);
             ResultSet rs = st.executeQuery();
             if (!rs.next()) {
                 throw new NotExistStorageException(uuid);
             }
             Resume r = new Resume(uuid, rs.getString("full_name"));
-            addContacts(rs, r);
+            do {
+                addContact(rs, r);
+            } while (rs.next());
             return r;
         });
     }
@@ -83,32 +84,31 @@ public class SqlStorage implements Storage {
 
     @Override
     public List<Resume> getAllSorted() {
-        return sqlHelper.runSql("SELECT * FROM resume r ORDER BY full_name, uuid", st -> {
-            ResultSet rs = st.executeQuery();
+        return sqlHelper.transactionalExecute(conn -> {
             List<Resume> resumes = new ArrayList<>();
-            while (rs.next()) {
-                Resume resume = new Resume(rs.getString("uuid"), rs.getString("full_name"));
-                resumes.add(resume);
-                sqlHelper.runSql("SELECT * FROM contact WHERE resume_uuid=?", st1 -> {
-                    st1.setString(1, resume.getUuid());
-                    ResultSet rs1 = st1.executeQuery();
-                    while (rs1.next()) {
-                        addContacts(rs1, resume);
+            try (PreparedStatement ps = conn.prepareStatement("SELECT * FROM resume r ORDER BY full_name, uuid")) {
+                ResultSet rs = ps.executeQuery();
+                while (rs.next()) {
+                    Resume resume = new Resume(rs.getString("uuid"), rs.getString("full_name"));
+                    resumes.add(resume);
+                    try (PreparedStatement ps1 = conn.prepareStatement("SELECT * FROM contact WHERE resume_uuid=?")) {
+                        ps1.setString(1, resume.getUuid());
+                        ResultSet rs1 = ps1.executeQuery();
+                        while (rs1.next()) {
+                            addContact(rs1, resume);
+                        }
                     }
-                    return null;
-                });
+                }
             }
             return resumes;
         });
     }
 
-    private void addContacts(ResultSet rs, Resume resume) throws SQLException {
-        do {
-            String value = rs.getString("value");
-            if (value != null) {
-                resume.addContact(ContactType.valueOf(rs.getString("type")), value);
-            }
-        } while (rs.next());
+    private void addContact(ResultSet rs, Resume resume) throws SQLException {
+        String value = rs.getString("value");
+        if (value != null) {
+            resume.addContact(ContactType.valueOf(rs.getString("type")), value);
+        }
     }
 
     @Override
