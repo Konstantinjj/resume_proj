@@ -7,6 +7,7 @@ import com.urise.webapp.sql.SqlHelper;
 
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -57,9 +58,9 @@ public class SqlStorage implements Storage {
     @Override
     public Resume get(String uuid) {
         return sqlHelper.runSql("SELECT * FROM resume r " +
-                                    "LEFT JOIN contact c " +
-                                    "ON r.uuid = c.resume_uuid " +
-                                    "WHERE r.uuid =?\n", st -> {
+                "LEFT JOIN contact c " +
+                "ON r.uuid = c.resume_uuid " +
+                "WHERE r.uuid =?\n", st -> {
             st.setString(1, uuid);
             ResultSet rs = st.executeQuery();
             if (!rs.next()) {
@@ -85,22 +86,21 @@ public class SqlStorage implements Storage {
     @Override
     public List<Resume> getAllSorted() {
         return sqlHelper.transactionalExecute(conn -> {
-            List<Resume> resumes = new ArrayList<>();
+            Map<String, Resume> map = new LinkedHashMap<>();
             try (PreparedStatement ps = conn.prepareStatement("SELECT * FROM resume r ORDER BY full_name, uuid")) {
                 ResultSet rs = ps.executeQuery();
                 while (rs.next()) {
                     Resume resume = new Resume(rs.getString("uuid"), rs.getString("full_name"));
-                    resumes.add(resume);
-                    try (PreparedStatement ps1 = conn.prepareStatement("SELECT * FROM contact WHERE resume_uuid=?")) {
-                        ps1.setString(1, resume.getUuid());
-                        ResultSet rs1 = ps1.executeQuery();
-                        while (rs1.next()) {
-                            addContact(rs1, resume);
-                        }
-                    }
+                    map.put(resume.getUuid(), resume);
                 }
             }
-            return resumes;
+            try (PreparedStatement ps = conn.prepareStatement("SELECT * FROM contact ORDER BY resume_uuid")) {
+                ResultSet rs = ps.executeQuery();
+                while (rs.next()) {
+                    addContact(rs, map.get(rs.getString("resume_uuid")));
+                }
+            }
+            return new ArrayList<>(map.values());
         });
     }
 
