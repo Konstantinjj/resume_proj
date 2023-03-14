@@ -19,22 +19,21 @@ public class ResumeServlet extends HttpServlet {
 //        String name = request.getParameter("name");
 //        response.getWriter().write(name == null ? "Hello Resumes" : "Hello " + name + "!");
         StringBuilder sb = new StringBuilder();
-        sb.append("<table border=\"3\">");
+        sb.append("<table border=\"1\">");
 
         sb.append("<td>");
-        sb.append("<font size=\"6\">");
         sb.append("uuid");
         sb.append("</font>");
         sb.append("</td>");
 
         sb.append("<td>");
-        sb.append("<font size=\"6\">");
         sb.append("full_name");
         sb.append("</font>");
         sb.append("</td>");
 
         Storage storage = Config.get().getSqlStorage();
 
+        sb.append("<tbody>");
         for (Resume r : storage.getAllSorted()) {
             sb.append("<tr>");
 
@@ -48,6 +47,7 @@ public class ResumeServlet extends HttpServlet {
 
             sb.append("</tr>");
         }
+        sb.append("/<tbody>");
         sb.append("</table>");
 
         OutputStream outStream = response.getOutputStream();
