@@ -11,6 +11,14 @@ import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
 
 public class ResumeServlet extends HttpServlet {
+
+    private Storage storage;
+
+    @Override
+    public void init() throws ServletException {
+        storage = Config.get().getSqlStorage();
+    }
+
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         request.setCharacterEncoding("UTF-8");
@@ -30,8 +38,6 @@ public class ResumeServlet extends HttpServlet {
         sb.append("full_name");
         sb.append("</font>");
         sb.append("</td>");
-
-        Storage storage = Config.get().getSqlStorage();
 
         sb.append("<tbody>");
         for (Resume r : storage.getAllSorted()) {
