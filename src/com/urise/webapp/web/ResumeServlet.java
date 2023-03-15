@@ -54,7 +54,6 @@ public class ResumeServlet extends HttpServlet {
             sb.append("</tr>");
         }
         sb.append("/<tbody>");
-
         sb.append("</table>");
 
         OutputStream outStream = response.getOutputStream();
