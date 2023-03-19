@@ -59,12 +59,18 @@
 
                     <c:choose>
                         <c:when test="${org.paragraphs != null}">
-                            <c:forEach var="paragraph" items="${org.paragraphs}">
-                                ${paragraph.startDate} - ${paragraph.endDate}
-                                <b>${paragraph.title}</b> <br>
-                                ${paragraph.description}
-                                <br>
-                            </c:forEach>
+                            <table>
+                                <c:forEach var="paragraph" items="${org.paragraphs}">
+                                    <tr>
+                                        <td>${paragraph.startDate} - ${paragraph.endDate}</td>
+                                        <td><b>${paragraph.title}</b></td>
+                                    </tr>
+                                    <tr>
+                                        <td></td>
+                                        <td>${paragraph.description}</td>
+                                    </tr>
+                                </c:forEach>
+                            </table>
                         </c:when>
                     </c:choose>
 
