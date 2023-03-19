@@ -3,6 +3,7 @@ package com.urise.webapp.storage;
 import com.urise.webapp.exception.NotExistStorageException;
 import com.urise.webapp.model.*;
 import com.urise.webapp.sql.SqlHelper;
+import com.urise.webapp.util.JsonParser;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -163,20 +164,9 @@ public class SqlStorage implements Storage {
         try (PreparedStatement ps = conn.prepareStatement("INSERT INTO section (resume_uuid, type, content) VALUES (?,?,?)")) {
             for (Map.Entry<SectionType, AbstractSection> e : r.getSections().entrySet()) {
                 ps.setString(1, r.getUuid());
-                SectionType st = e.getKey();
-                ps.setString(2, st.name());
-                switch (st) {
-                    case PERSONAL, OBJECTIVE -> ps.setString(3, ((TextSection) e.getValue()).getDescription());
-                    case ACHIEVEMENT, QUALIFICATIONS -> {
-                        StringBuilder result = new StringBuilder();
-                        for (String s : ((ListSection) e.getValue()).getPoints()) {
-                            result.append(s).append("\n");
-                        }
-                        if (!result.toString().equals("")) {
-                            ps.setString(3, result.toString());
-                        }
-                    }
-                }
+                ps.setString(2, e.getKey().name());
+                AbstractSection section = e.getValue();
+                ps.setString(3, JsonParser.write(section, AbstractSection.class));
                 ps.addBatch();
             }
             ps.executeBatch();
@@ -185,19 +175,16 @@ public class SqlStorage implements Storage {
 
     private void addSection(ResultSet rs, Resume r) throws SQLException {
         String content = rs.getString("content");
-        SectionType st = SectionType.valueOf(rs.getString("type"));
         if (content != null) {
-            switch (st) {
-                case PERSONAL, OBJECTIVE -> r.addSection(st, new TextSection(content));
-                case ACHIEVEMENT, QUALIFICATIONS -> r.addSection(st, new ListSection(List.of(content.split("\n"))));
-            }
+            SectionType type = SectionType.valueOf(rs.getString("type"));
+            r.setSection(type, JsonParser.read(content, AbstractSection.class));
         }
     }
 
     private void addContact(ResultSet rs, Resume r) throws SQLException {
         String value = rs.getString("value");
         if (value != null) {
-            r.addContact(ContactType.valueOf(rs.getString("type")), value);
+            r.setContact(ContactType.valueOf(rs.getString("type")), value);
         }
     }
 }

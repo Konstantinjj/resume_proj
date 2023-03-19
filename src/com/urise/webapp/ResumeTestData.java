@@ -31,7 +31,7 @@ public class ResumeTestData {
         addContact(resume);
         addTextSections(resume);
         addListSections(resume);
-//        addOrganizationSections(resume);
+        addOrganizationSections(resume);
         return resume;
     }
 
