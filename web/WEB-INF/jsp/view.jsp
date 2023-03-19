@@ -60,7 +60,7 @@
                     <c:choose>
                         <c:when test="${org.paragraphs != null}">
                             <c:forEach var="paragraph" items="${org.paragraphs}">
-                                from ${paragraph.startDate} to ${paragraph.endDate}
+                                ${paragraph.startDate} - ${paragraph.endDate}
                                 <b>${paragraph.title}</b> <br>
                                 ${paragraph.description}
                                 <br>
