@@ -66,12 +66,12 @@ public class ResumeTestData {
         List<Paragraph> paragraphsLuxoft = new ArrayList<>();
         startDate = LocalDate.of(2011, 3, 1);
         endDate = LocalDate.of(2011, 4, 1);
-        paragraphsLuxoft.add(new Paragraph(startDate, endDate, "TitleExp5", "Descr5"));
+        paragraphsLuxoft.add(new Paragraph(startDate, endDate, "TitleEdu5", "Descr5"));
 
         List<Paragraph> paragraphsCoursera = new ArrayList<>();
         startDate = LocalDate.of(2013, 3, 1);
         endDate = LocalDate.of(2013, 5, 1);
-        paragraphsCoursera.add(new Paragraph(startDate, endDate, "TitleExp6", "Descr6"));
+        paragraphsCoursera.add(new Paragraph(startDate, endDate, "TitleEdu6", "Descr6"));
 
         experienceSections.add(new Organization("Alcatel", "urlExp1", paragraphsAlcatel));
         experienceSections.add(new Organization("Yota", "urlExp2", paragraphsYota));
