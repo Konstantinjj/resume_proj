@@ -56,7 +56,6 @@
                 <c:forEach var="org" items="${organizationSection.organizations}">
                     <a href='${org.header.url == null ? "" : org.header.url}'>${org.header.name == null ? "" : org.header.name }</a>
                     <br>
-
                     <c:choose>
                         <c:when test="${org.paragraphs != null}">
                             <table>
@@ -73,7 +72,6 @@
                             </table>
                         </c:when>
                     </c:choose>
-
                     <br>
                 </c:forEach>
             </c:when>
