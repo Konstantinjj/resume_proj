@@ -33,19 +33,22 @@
         <c:forEach var="type" items="<%=SectionType.values()%>">
 
             <c:set var="section" value="${resume.getSection(type)}"/>
-            <jsp:useBean id="section" type="com.urise.webapp.model.AbstractSection"/>
             <h3>${type.title}</h3>
-            <c:choose>
+            <c:if test="${section != null}">
+                <jsp:useBean id="section" type="com.urise.webapp.model.AbstractSection"/>
+<%--                <h3>${type.title}</h3>--%>
+                <c:choose>
 
-                <c:when test="${type=='PERSONAL' || type =='OBJECTIVE'}">
-                    <textarea name='${type}' cols=75 rows=3><%=section%></textarea>
-                </c:when>
-                <c:when test="${type=='QUALIFICATIONS' || type=='ACHIEVEMENT'}">
+                    <c:when test="${type=='PERSONAL' || type =='OBJECTIVE'}">
+                        <textarea name='${type}' cols=75 rows=3><%=section%></textarea>
+                    </c:when>
+                    <c:when test="${type=='QUALIFICATIONS' || type=='ACHIEVEMENT'}">
                     <textarea name='${type}' cols=75
                               rows=4><%=String.join("\n", ((ListSection) section).getPoints())%></textarea>
-                </c:when>
+                    </c:when>
 
-            </c:choose>
+                </c:choose>
+            </c:if>
         </c:forEach>
         <button type="submit">Сохранить</button>
         <button onclick="window.history.back()">Отменить</button>
