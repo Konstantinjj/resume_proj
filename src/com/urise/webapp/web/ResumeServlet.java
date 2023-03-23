@@ -31,16 +31,13 @@ public class ResumeServlet extends HttpServlet {
         }
         Resume r;
         switch (action) {
-            case "delete":
+            case "delete" -> {
                 storage.delete(uuid);
                 response.sendRedirect("resume");
                 return;
-            case "view":
-            case "edit":
-                r = storage.get(uuid);
-                break;
-            default:
-                throw new IllegalArgumentException("Action " + action + " is illegal");
+            }
+            case "view", "edit" -> r = storage.get(uuid);
+            default -> throw new IllegalArgumentException("Action " + action + " is illegal");
         }
         request.setAttribute("resume", r);
         request.getRequestDispatcher(
@@ -67,15 +64,20 @@ public class ResumeServlet extends HttpServlet {
         for (SectionType st : SectionType.values()) {
             String value = request.getParameter(st.name());
             String[] values = request.getParameterValues(st.name());
-            if (value != null && value.trim().length() != 0) {
+            String replacedValue = null;
+            if (value != null) {
+                replacedValue = value.replaceAll("\\r\\n", "§")
+                        .replaceAll("§+", "\r\n");
+            }
+            if (replacedValue != null && replacedValue.trim().length() != 0) {
                 switch (st) {
                     case PERSONAL:
                     case OBJECTIVE:
-                        r.addSection(st, new TextSection(values[0]));
+                        r.addSection(st, new TextSection(replacedValue));
                         break;
                     case ACHIEVEMENT:
                     case QUALIFICATIONS:
-                        r.addSection(st, new ListSection(List.of(value.split("\\r\\n"))));
+                        r.addSection(st, new ListSection(List.of(replacedValue.split("\\r\\n"))));
                         break;
                     case EDUCATION:
                     case EXPERIENCE:
