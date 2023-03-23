@@ -1,8 +1,5 @@
-<%@ page import="com.urise.webapp.model.Resume" %>
 <%@ page import="java.util.List" %>
-<%@ page import="com.urise.webapp.model.ContactType" %>
-<%@ page import="com.urise.webapp.model.SectionType" %>
-<%@ page import="com.urise.webapp.model.ListSection" %>
+<%@ page import="com.urise.webapp.model.*" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 
@@ -36,15 +33,62 @@
             <h3>${type.title}</h3>
             <c:if test="${section != null}">
                 <jsp:useBean id="section" type="com.urise.webapp.model.AbstractSection"/>
-<%--                <h3>${type.title}</h3>--%>
                 <c:choose>
 
                     <c:when test="${type=='PERSONAL' || type =='OBJECTIVE'}">
                         <textarea name='${type}' cols=75 rows=3><%=section%></textarea>
                     </c:when>
+
                     <c:when test="${type=='QUALIFICATIONS' || type=='ACHIEVEMENT'}">
                     <textarea name='${type}' cols=75
                               rows=4><%=String.join("\n", ((ListSection) section).getPoints())%></textarea>
+                    </c:when>
+
+                    <c:when test="${type=='EXPERIENCE' || type =='EDUCATION'}">
+                        <c:forEach var="org" items="<%=((OrganizationSection) section).getOrganizations()%>">
+                            <div>
+                                <dl style="display: inline;">
+                                    <dt>Название организации:</dt>
+                                    <dd><input type="text" name="${type}" size="40" value="${org.header.name}"></dd>
+                                </dl>
+                                <dl style="display: inline; margin-left: 20px">
+                                    <dt>Сайт организации:</dt>
+                                    <dd><input type="text" name="${type}_URL" size="40" value="${org.header.url}"></dd>
+                                </dl>
+                                <br>
+                            </div>
+
+                            <div style="margin-left: 40px">
+                                <c:forEach var="par" items="${org.paragraphs}">
+                                    <jsp:useBean id="par" type="com.urise.webapp.model.Paragraph"/>
+                                    <dl>
+                                        <dt>Начальная дата:</dt>
+                                        <dd>
+                                            <input type="text" name="${type}_startDate" size=10
+                                                   value="${par.startDate}" placeholder="YYYY-MM-DD">
+                                        </dd>
+                                    </dl>
+                                    <dl>
+                                        <dt>Конечная дата:</dt>
+                                        <dd>
+                                            <input type="text" name="${type}_endDate" size=10
+                                                   value="${par.endDate}" placeholder="YYYY-MM-DD">
+                                    </dl>
+                                    <dl>
+                                        <dt>Должность:</dt>
+                                        <dd><input type="text" name='${type}_title' size=75
+                                                   value="${par.title}">
+                                    </dl>
+                                    <dl>
+                                        <dt>Описание:</dt>
+                                        <dd><textarea name="${type}_description" rows=5
+                                                      cols=75>${par.description}</textarea></dd>
+                                    </dl>
+                                    <br>
+                                </c:forEach>
+                            </div>
+
+                        </c:forEach>
                     </c:when>
 
                 </c:choose>
