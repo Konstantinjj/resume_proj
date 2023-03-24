@@ -3,12 +3,14 @@ package com.urise.webapp.web;
 import com.urise.webapp.Config;
 import com.urise.webapp.model.*;
 import com.urise.webapp.storage.Storage;
+import com.urise.webapp.util.DateUtil;
+import com.urise.webapp.util.StringUtil;
 
 import javax.servlet.*;
 import javax.servlet.http.*;
 import java.io.IOException;
-import java.io.OutputStream;
-import java.nio.charset.StandardCharsets;
+import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 public class ResumeServlet extends HttpServlet {
@@ -54,7 +56,7 @@ public class ResumeServlet extends HttpServlet {
         r.setFullName(fullName);
         for (ContactType type : ContactType.values()) {
             String value = request.getParameter(type.name());
-            if (value != null && value.trim().length() != 0) {
+            if (!StringUtil.checkEmpty(value)) {
                 r.addContact(type, value);
             } else {
                 r.getContacts().remove(type);
@@ -69,22 +71,38 @@ public class ResumeServlet extends HttpServlet {
                 replacedValue = value.replaceAll("\\r\\n", "§")
                         .replaceAll("§+", "\r\n");
             }
-            if (replacedValue != null && replacedValue.trim().length() != 0) {
-                switch (st) {
-                    case PERSONAL:
-                    case OBJECTIVE:
-                        r.addSection(st, new TextSection(replacedValue));
-                        break;
-                    case ACHIEVEMENT:
-                    case QUALIFICATIONS:
-                        r.addSection(st, new ListSection(List.of(replacedValue.split("\\r\\n"))));
-                        break;
-                    case EDUCATION:
-                    case EXPERIENCE:
-                        break;
-                }
-            } else {
+            if (StringUtil.checkEmpty(value) && values.length < 2) {
                 r.getSections().remove(st);
+            } else {
+                switch (st) {
+                    case PERSONAL, OBJECTIVE -> r.addSection(st, new TextSection(replacedValue));
+                    case ACHIEVEMENT, QUALIFICATIONS ->
+                            r.addSection(st, new ListSection(List.of(replacedValue.split("\\r\\n"))));
+                    case EDUCATION, EXPERIENCE -> {
+                        List<Organization> orgs = new ArrayList<>();
+                        String[] urls = request.getParameterValues(st.name() + "_URL");
+                        for (int i = 0; i < values.length; i++) {
+                            String name = values[i];
+                            if (!StringUtil.checkEmpty(name)) {
+                                List<Paragraph> positions = new ArrayList<>();
+                                String prefix = st.name() + i;
+                                String[] startDates = request.getParameterValues(prefix + "_SD");
+                                String[] endDates = request.getParameterValues(prefix + "_ED");
+                                String[] titles = request.getParameterValues(prefix + "_TITLE");
+                                String[] descriptions = request.getParameterValues(prefix + "_DESCRIPTION");
+                                if (titles != null) {
+                                    for (int j = 0; j < titles.length; j++) {
+                                        if (!StringUtil.checkEmpty(titles[j])) {
+                                            positions.add(new Paragraph(DateUtil.parse(startDates[j]), DateUtil.parse(endDates[j]), titles[j], descriptions[j]));
+                                        }
+                                    }
+                                }
+                                orgs.add(new Organization(new Link(name, urls[i]), positions));
+                            }
+                        }
+                        r.setSection(st, new OrganizationSection(orgs));
+                    }
+                }
             }
         }
         storage.update(r);

@@ -45,7 +45,9 @@
                     </c:when>
 
                     <c:when test="${type=='EXPERIENCE' || type =='EDUCATION'}">
-                        <c:forEach var="org" items="<%=((OrganizationSection) section).getOrganizations()%>">
+                        <c:forEach var="org" items="<%=((OrganizationSection) section).getOrganizations()%>"
+                                   varStatus="index">
+                            <br>
                             <div>
                                 <dl style="display: inline;">
                                     <dt>Название организации:</dt>
@@ -58,30 +60,30 @@
                                 <br>
                             </div>
 
-                            <div style="margin-left: 40px">
+                            <div style="margin-top: 10px; margin-left: 40px">
                                 <c:forEach var="par" items="${org.paragraphs}">
                                     <jsp:useBean id="par" type="com.urise.webapp.model.Paragraph"/>
-                                    <dl>
+                                    <dl style="display: inline;">
                                         <dt>Начальная дата:</dt>
                                         <dd>
-                                            <input type="text" name="${type}_startDate" size=10
+                                            <input type="text" name="${type}${index.index}_SD" size=10
                                                    value="${par.startDate}" placeholder="YYYY-MM-DD">
                                         </dd>
                                     </dl>
-                                    <dl>
+                                    <dl style="display: inline; margin-left: 20px">
                                         <dt>Конечная дата:</dt>
                                         <dd>
-                                            <input type="text" name="${type}_endDate" size=10
+                                            <input type="text" name="${type}${index.index}_ED" size=10
                                                    value="${par.endDate}" placeholder="YYYY-MM-DD">
                                     </dl>
                                     <dl>
                                         <dt>Должность:</dt>
-                                        <dd><input type="text" name='${type}_title' size=75
+                                        <dd><input type="text" name='${type}${index.index}_TITLE' size=75
                                                    value="${par.title}">
                                     </dl>
                                     <dl>
                                         <dt>Описание:</dt>
-                                        <dd><textarea name="${type}_description" rows=5
+                                        <dd><textarea name="${type}${index.index}_DESCRIPTION" rows=5
                                                       cols=75>${par.description}</textarea></dd>
                                     </dl>
                                     <br>
