@@ -38,7 +38,43 @@ public class ResumeServlet extends HttpServlet {
                 response.sendRedirect("resume");
                 return;
             }
-            case "view", "edit" -> r = storage.get(uuid);
+            case "view" -> r = storage.get(uuid);
+            case "edit" -> {
+                r = storage.get(uuid);
+                for (SectionType st : SectionType.values()) {
+                    switch (st) {
+                        case PERSONAL, OBJECTIVE -> {
+                            TextSection textSection = (TextSection) r.getSection(st);
+                            if (textSection == null) {
+                                r.addSection(st, new TextSection(""));
+                            }
+                        }
+                        case ACHIEVEMENT, QUALIFICATIONS -> {
+                            ListSection listSection = (ListSection) r.getSection(st);
+                            List<String> emptyPoints = new ArrayList<>();
+                            if (listSection == null) {
+                                r.addSection(st, new ListSection(emptyPoints));
+                            }
+                        }
+                        case EDUCATION, EXPERIENCE -> {
+                            OrganizationSection section = (OrganizationSection) r.getSection(st);
+                            List<Organization> emptyOrganizations = new ArrayList<>();
+                            List<Paragraph> emptyParagraphs = new ArrayList<>();
+                            emptyParagraphs.add(new Paragraph());
+                            emptyOrganizations.add(new Organization(null, emptyParagraphs));
+                            if (section != null) {
+                                for (Organization org : section.getOrganizations()) {
+                                    List<Paragraph> paragraphs = new ArrayList<>();
+                                    paragraphs.add(new Paragraph());
+                                    paragraphs.addAll(org.getParagraphs());
+                                    emptyOrganizations.add(new Organization(org.getHeader(), paragraphs));
+                                }
+                            }
+                            r.setSection(st, new OrganizationSection(emptyOrganizations));
+                        }
+                    }
+                }
+            }
             default -> throw new IllegalArgumentException("Action " + action + " is illegal");
         }
         request.setAttribute("resume", r);

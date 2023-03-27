@@ -27,23 +27,28 @@
             <jsp:useBean id="sectionType"
                          type="com.urise.webapp.model.SectionType"/>
 
-            <%--    <h3>${sectionType.title}</h3>--%>
+            <%--                <h3>${sectionType.title}</h3>--%>
     <p>
         <c:choose>
-            <c:when test="${sectionType == 'PERSONAL' || sectionType == 'OBJECTIVE'}">${resume.getSection(sectionType)}</c:when>
-
-        <c:when test="${sectionType == 'ACHIEVEMENT' || sectionType == 'QUALIFICATIONS'}">
-            <c:set var="listSection" value="<%=resume.getSection(sectionType)%>"/>
-            <jsp:useBean id="listSection"
-                         class="com.urise.webapp.model.ListSection"/>
-        <c:choose>
-        <c:when test="${listSection.points != null}">
+        <c:when test="${sectionType == 'PERSONAL' || sectionType == 'OBJECTIVE'}">
+        <c:if test="${not empty resume.getSection(sectionType)}">
     <h3>${sectionType.title}</h3>
-    <c:forEach var="point" items="${listSection.points}">
-        <li>${point} </li>
-    </c:forEach>
+        ${resume.getSection(sectionType)}
+    </c:if>
     </c:when>
-    </c:choose>
+
+    <c:when test="${sectionType == 'ACHIEVEMENT' || sectionType == 'QUALIFICATIONS'}">
+        <c:set var="listSection" value="<%=resume.getSection(sectionType)%>"/>
+        <jsp:useBean id="listSection"
+                     class="com.urise.webapp.model.ListSection"/>
+        <c:choose>
+            <c:when test="${listSection.points != null}">
+                <h3>${sectionType.title}</h3>
+                <c:forEach var="point" items="${listSection.points}">
+                    <li>${point} </li>
+                </c:forEach>
+            </c:when>
+        </c:choose>
     </c:when>
 
     <c:when test="${sectionType == 'EXPERIENCE' || sectionType == 'EDUCATION'}">

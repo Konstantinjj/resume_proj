@@ -13,6 +13,20 @@
 <body>
 <jsp:include page="fragments/header.jsp"/>
 <section>
+    <div class="center">
+        <style>
+            .center {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+            }
+        </style>
+        <a href="resume?action=add">
+            <img src="img/add.png">
+            <span>Добавить резюме</span>
+        </a>
+    </div>
+    <br>
     <table border="1" cellpadding="8" cellspacing="0">
         <tr>
             <th>Имя</th>
