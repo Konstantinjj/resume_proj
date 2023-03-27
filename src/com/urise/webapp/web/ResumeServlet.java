@@ -71,7 +71,7 @@ public class ResumeServlet extends HttpServlet {
                 replacedValue = value.replaceAll("\\r\\n", "§")
                         .replaceAll("§+", "\r\n");
             }
-            if (StringUtil.checkEmpty(value) && values.length < 2) {
+            if (values == null || (StringUtil.checkEmpty(value) && values.length < 2)) {
                 r.getSections().remove(st);
             } else {
                 switch (st) {

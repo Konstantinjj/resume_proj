@@ -27,7 +27,7 @@
             <jsp:useBean id="sectionType"
                          type="com.urise.webapp.model.SectionType"/>
 
-    <h3>${sectionType.title}</h3>
+            <%--    <h3>${sectionType.title}</h3>--%>
     <p>
         <c:choose>
             <c:when test="${sectionType == 'PERSONAL' || sectionType == 'OBJECTIVE'}">${resume.getSection(sectionType)}</c:when>
@@ -38,8 +38,9 @@
                          class="com.urise.webapp.model.ListSection"/>
         <c:choose>
         <c:when test="${listSection.points != null}">
-        <c:forEach var="point" items="${listSection.points}">
-    <li>${point} </li>
+    <h3>${sectionType.title}</h3>
+    <c:forEach var="point" items="${listSection.points}">
+        <li>${point} </li>
     </c:forEach>
     </c:when>
     </c:choose>
@@ -52,7 +53,7 @@
 
         <c:choose>
             <c:when test="${organizationSection.organizations != null}">
-
+                <h3>${sectionType.title}</h3>
                 <c:forEach var="org" items="${organizationSection.organizations}">
                     <a href='${org.header.url == null ? "" : org.header.url}'>${org.header.name == null ? "" : org.header.name }</a>
                     <br>
