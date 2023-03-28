@@ -97,7 +97,9 @@
             </c:if>
         </c:forEach>
         <button type="submit">Сохранить</button>
-        <button onclick="window.history.back()">Отменить</button>
+        <button type="button" class="btn btn-secondary"
+                onclick="window.location.href='http://localhost:8080/resumes/resume'">Отменить
+        </button>
     </form>
 </section>
 <jsp:include page="fragments/footer.jsp"/>
