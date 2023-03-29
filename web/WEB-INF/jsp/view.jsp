@@ -60,14 +60,19 @@
             <c:when test="${organizationSection.organizations != null}">
                 <h3>${sectionType.title}</h3>
                 <c:forEach var="org" items="${organizationSection.organizations}">
-                    <a href='${org.header.url == null ? "" : org.header.url}'>${org.header.name == null ? "" : org.header.name }</a>
+                    <c:if test="${not empty org.header.url}">
+                        <a href="${org.header.url}">${org.header.name}</a>
+                    </c:if>
+                    <c:if test="${empty org.header.url}">
+                        ${org.header.name}
+                    </c:if>
                     <br>
                     <c:choose>
                         <c:when test="${org.paragraphs != null}">
                             <table>
                                 <c:forEach var="paragraph" items="${org.paragraphs}">
                                     <tr>
-                                        <td>${paragraph.startDate} - ${paragraph.endDate}</td>
+                                        <td>${paragraph.startDateFormat} - ${paragraph.startDateFormat}</td>
                                         <td><b>${paragraph.title}</b></td>
                                     </tr>
                                     <tr>

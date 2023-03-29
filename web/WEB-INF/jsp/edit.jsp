@@ -67,14 +67,14 @@
                                         <dt>Начальная дата:</dt>
                                         <dd>
                                             <input type="text" name="${type}${index.index}_SD" size=10
-                                                   value="${par.startDate}" placeholder="YYYY-MM-DD">
+                                                   value="${par.startDateFormat}" placeholder="YYYY-MM-DD">
                                         </dd>
                                     </dl>
                                     <dl style="display: inline; margin-left: 20px">
                                         <dt>Конечная дата:</dt>
                                         <dd>
                                             <input type="text" name="${type}${index.index}_ED" size=10
-                                                   value="${par.endDate}" placeholder="YYYY-MM-DD">
+                                                   value="${par.endDateFormat}" placeholder="YYYY-MM-DD">
                                     </dl>
                                     <dl>
                                         <dt>Должность:</dt>

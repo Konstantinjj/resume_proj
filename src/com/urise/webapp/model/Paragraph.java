@@ -1,5 +1,6 @@
 package com.urise.webapp.model;
 
+import com.urise.webapp.util.DateUtil;
 import com.urise.webapp.util.LocalDateAdapter;
 
 import javax.xml.bind.annotation.XmlAccessType;
@@ -43,6 +44,14 @@ public class Paragraph implements Serializable {
 
     public LocalDate getEndDate() {
         return endDate;
+    }
+
+    public String getEndDateFormat() {
+        return DateUtil.format(endDate);
+    }
+
+    public String getStartDateFormat() {
+        return DateUtil.format(startDate);
     }
 
     public String getTitle() {
