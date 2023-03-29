@@ -25,6 +25,7 @@ public class ResumeServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String uuid = request.getParameter("uuid");
+        String uuidCheck;
         String action = request.getParameter("action");
         if (action == null) {
             request.setAttribute("resumes", storage.getAllSorted());
@@ -41,6 +42,28 @@ public class ResumeServlet extends HttpServlet {
             case "view" -> r = storage.get(uuid);
             case "add" -> {
                 r = new Resume();
+                for (SectionType st : SectionType.values()) {
+                    switch (st) {
+                        case PERSONAL:
+                        case OBJECTIVE:
+                            r.addSection(st, new TextSection(""));
+                            break;
+                        case ACHIEVEMENT:
+                        case QUALIFICATIONS:
+                            List<String> emptyPoints = new ArrayList<>();
+                            r.addSection(st, new ListSection(emptyPoints));
+                            break;
+                        case EXPERIENCE:
+                        case EDUCATION:
+                            List<Organization> emptyOrganizations = new ArrayList<>();
+                            List<Paragraph> emptyParagraphs = new ArrayList<>();
+                            emptyParagraphs.add(new Paragraph());
+                            emptyOrganizations.add(new Organization(null, emptyParagraphs));
+                            r.addSection(st, new OrganizationSection(emptyOrganizations));
+                            break;
+                    }
+                }
+                uuidCheck = r.getUuid();
             }
             case "edit" -> {
                 r = storage.get(uuid);
