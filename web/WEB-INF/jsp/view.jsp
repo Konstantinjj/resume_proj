@@ -72,7 +72,7 @@
                             <table>
                                 <c:forEach var="paragraph" items="${org.paragraphs}">
                                     <tr>
-                                        <td>${paragraph.startDateFormat} - ${paragraph.startDateFormat}</td>
+                                        <td>${paragraph.startDateFormat} - ${paragraph.endDateFormat}</td>
                                         <td><b>${paragraph.title}</b></td>
                                     </tr>
                                     <tr>
